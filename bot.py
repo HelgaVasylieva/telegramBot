@@ -12,10 +12,16 @@ bot = telebot.TeleBot(API_TOKEN)
 @bot.message_handler(commands=['start'])
 def send_welcome(message):
 
-    markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    btn1 = types.KeyboardButton(ask)
-    btn2 = types.KeyboardButton(text2)
-    markup.add(btn1, btn2)
+    markup = types.InlineKeyboardMarkup()
+    btn1 = types.InlineKeyboardButton(ask, url='https://t.me/Helga_W')
+    markup.row(btn1)
+    btn2 = types.InlineKeyboardButton(text2, callback_data='text2')
+    markup.row(btn2)
+    btn3 = types.InlineKeyboardButton(text3, callback_data='text3')
+    markup.row(btn3)
+    btn4 = types.InlineKeyboardButton(text4, callback_data='text4')
+    markup.row(btn4)
+
 
     bot.send_message(
         message.chat.id,
@@ -24,6 +30,37 @@ def send_welcome(message):
         reply_markup=markup
     )
 
+@bot.callback_query_handler(func=lambda callback:True)
+def callback_message(callback):
+
+    if callback.data == 'text3':
+        bot.send_message(callback.message.chat.id, text=price)
+
+    elif callback.data == 'text2':
+        markup = types.InlineKeyboardMarkup()
+        btn1 = types.InlineKeyboardButton(text5, callback_data='text5')
+        markup.row(btn1)
+        btn2 = types.InlineKeyboardButton(text6, callback_data='text6')
+        markup.row(btn2)
+
+        bot.send_message(callback.message.chat.id, text=f"{callback.message.chat.first_name}, яке тренування цікавить?", reply_markup=markup)
+    elif callback.data == 'text4':
+        bot.send_message(callback.message.chat.id, text=timetable)
+
+
+
+@bot.callback_query_handler(func=lambda callback:True)
+def callback_message1(callback):
+    if callback.data == 'text5':
+        markup = types.InlineKeyboardMarkup()
+        btn1 = types.InlineKeyboardButton("ПН")
+        btn2 = types.InlineKeyboardButton("ВТ")
+        btn3 = types.InlineKeyboardButton("СР")
+        btn4 = types.InlineKeyboardButton("ЧТ")
+        btn5 = types.InlineKeyboardButton("Пт")
+        btn6 = types.InlineKeyboardButton("СБ")
+        markup.add(btn1, btn2, btn3, btn4, btn5, btn6)
+        bot.send_message(callback.message.chat.id, text="Обери день", reply_markup=markup)
 
 @bot.message_handler(content_types=['text'])
 def func(message):
